@@ -24,22 +24,27 @@ form {
     padding: 40px 20px 20px;
     background: white;
     border-radius: 30px;
+    box-shadow: 0px 0px 20px #bebebe;
+    border: none;
 }
 
-h2 {
+h1 {
     font-size: 2rem;
     width: 100%;
     text-align: center;
-    border: 1px solid red;
     font-weight: 900;
 }
 input {
     width: 95%;
-    height: 60px;
+    height: 65px;
     border-radius: 5px;
-    border: 1px solid #ccc;
     margin-bottom: 15px;
     padding-left: 20%;
+    margin-left: 5%;
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-left: 0px;
 }
 
 input:focus {
@@ -63,4 +68,78 @@ input:focus {
 
 .btn-blue:hover{
     background: #038bb4;
+}
+
+a{
+    text-decoration: none;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: black;
+    transition: 0.1s ease;
+}
+a:hover{
+    color: #00c3ff;
+}
+
+.link{
+    color: #00c3ff;
+    text-decoration: underline;
+}
+
+.input-group{
+    width: 90%;
+}
+
+.input-icon{
+    width: 60px;
+    height: auto;
+    position: absolute;
+    background-color: #28a3c9;
+    border-radius: 8px;
+    margin-top: 3px;
+}
+input[type='checkbox']{
+    display: inline-block;
+    height: 20px;
+    width: 5%;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+label{
+    display: inline-block;
+    width: 85%;
+    font-size: 13px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+.erro{
+    text-align: center;
+    margin-bottom: 10px;
+    color: #c82a2a;
+    font-weight: bold;
+}
+.erro-geral{
+    background-color: rgb(194, 47, 47);
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.erro-input{
+    border-top: 1px solid #c82a2a;
+    border-right: 1px solid #c82a2a;
+    border-bottom: 1px solid #c82a2a;
+    border-left: 0px;
+}
+
+.sucesso{
+    background-color: #2ac874;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    color: white;
+    font-weight: bold;
 }
