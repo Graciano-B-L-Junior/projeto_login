@@ -7,21 +7,25 @@ if(isset($_POST['email']) and isset($_POST['senha']) and !empty($_POST['email'])
     $senha = limparPost($_POST['senha']);
     $senha_cript = sha1($senha);
 
+
     //VERIFICAR SE EXISTE ESTE USUARIO
     $sql = $pdo->prepare("SELECT * FROM usuarios WHERE email = ? AND senha = ? LIMIT 1");
     $sql->execute([$email,$senha_cript]);
     $usuario = $sql->fetch(PDO::FETCH_ASSOC);
     if($usuario){
         //USUARIO EXISTE
+        if($usuario['status']=='confirmado'){
         //CRIAR TOKEN
-        echo "usuario encontrado";
-        $token = sha1(uniqid().date('d-m-Y-H-i-s'));
+            $token = sha1(uniqid().date('d-m-Y-H-i-s'));
         //ATUALIZAR O TOKEN DO USUARIO NO BANCO
-        $sql = $pdo->prepare("UPDATE usuarios SET token=? WHERE email=? AND senha=?");
-        if($sql->execute([$token,$email,$senha_cript])){
+            $sql = $pdo->prepare("UPDATE usuarios SET token=? WHERE email=? AND senha=?");
+            if($sql->execute([$token,$email,$senha_cript])){
             //ARMAZENA ESTE NA SESSAO (SESSIO)
-            $_SESSION['token'] = $token;
-            header('location: restrita.php');
+                $_SESSION['token'] = $token;
+                header('location: restrita.php');
+            }
+        }else{
+            $erro_login = "Por favor confirme seu e-mail de cadastro";
         }
     }else{
         //USUARIO NÃO EXISTE
@@ -38,7 +42,7 @@ if(isset($_POST['email']) and isset($_POST['senha']) and !empty($_POST['email'])
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/estilo.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <title>Login</title>
 </head>
 
@@ -49,7 +53,10 @@ if(isset($_POST['email']) and isset($_POST['senha']) and !empty($_POST['email'])
         
         <?php 
             if(isset($_GET['result']) and $_GET['result'] == 'ok'){
-                echo "<div class='sucesso'>Cadastrado com sucesso</div>";
+                echo "<div style='text-align:center' class='sucesso'>Cadastrado com sucesso</div>";
+            }
+            if(isset($erro_login)){
+                echo "<div style='text-align:center' class='erro-geral animate__animated animate__rubberBand'>".$erro_login."</div>";
             }
         ?>
         <div class="input-group">

@@ -1,4 +1,7 @@
 <?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+
 require('db/conexao.php');
 if (
     isset($_POST['nome_completo']) and
@@ -47,26 +50,48 @@ if (
             $erro_check_box = "Desativado";
         }
 
-        if (!isset($erro_geral) and 
-        !isset($erro_nome) and 
-        !isset($email_erro) and 
-        !isset($erro_senha) and 
-        !isset($erro_repete_senha) and 
-        !isset($erro_check_box)) {
+        if (
+            !isset($erro_geral) and
+            !isset($erro_nome) and
+            !isset($email_erro) and
+            !isset($erro_senha) and
+            !isset($erro_repete_senha) and
+            !isset($erro_check_box)
+        ) {
             //VERIFICAR SE O USUÁRIO ESTÁ CADASTRADO NO BANCO
             $sql = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?LIMIT 1");
             $sql->execute([$email]);
             $usuario = $sql->fetch();
-            if(!$usuario){
-                $recupera_senha="";
-                $token="";
-                $status="novo";
+            if (!$usuario) {
+                $recupera_senha = "";
+                $token = "";
+                $codigo_confirmacao = uniqid();;
+                $status = "novo";
                 $data_cadastro = date('d/m/Y');
-                $sql = $pdo->prepare("INSERT INTO usuarios VALUES (null,?,?,?,?,?,?,?)");
-                if($sql->execute([$nome,$email,$senha_cript,$recupera_senha,$token,$status,$data_cadastro])){
-                    header('location: index.php');
+                $sql = $pdo->prepare("INSERT INTO usuarios VALUES (null,?,?,?,?,?,?,?,?)");
+                if ($sql->execute([$nome, $email, $senha_cript, $recupera_senha, $token, $codigo_confirmacao, $status, $data_cadastro])) {
+                    if ($modo == 'local') {
+                        header('location: index.php?result=ok');
+                    }
+                    if ($modo == 'produção') {
+                        $mail = new PHPMailer(true);
+                        try {
+                            //Recipients
+                            $mail->setFrom('from@example.com', 'Sistema de login'); // QUEM ESTÁ MANDANDO O EMIAL (O SISTEMA)
+                            $mail->addAddress($email, $nome);     // QUEM ESTÁ RECEBENDO O EMAIL
+
+                            //Content
+                            $mail->isHTML(true);                  //QUEM ESTÁ RECEBENDO O EMAIL
+                            $mail->Subject = 'Confirme o seu cadastro!';
+                            $mail->Body    = '<h1> Por favor confirme o seu e-mail abaixo</h1><br><br><a href="https://seusistema.com.br/confirmacao.php?cod_confirmacao' . $codigo_confirmacao . '">Confirmar E-mail<a/>';
+                            $mail->send();
+                            header('location: obrigado.php');
+                        } catch (Exception $e) {
+                            echo "Ocorreu um problema ao enviar o e-mail tente novamente daqui a pouco";
+                        }
+                    }
                 }
-            }else{
+            } else {
                 //JÁ EXISTE USUÁRIO
                 $erro_geral = "Usuário já cadastrado";
             }
@@ -153,7 +178,7 @@ if (
             <label for="termos">Ao se cadastrar você concorda com a nossa <a class="link" href="#">política de
                     privacidade </a> e os <a class="link" href="#">termos de uso </a></label>
         </div>
-        <button class="btn-blue" type="submit">Fazer login</button>
+        <button class="btn-blue" type="submit">Cadastrar</button>
         <a href="index.php">Já tenho uma conta</a>
     </form>
 </body>

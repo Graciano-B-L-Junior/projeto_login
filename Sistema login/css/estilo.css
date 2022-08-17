@@ -143,3 +143,20 @@ label{
     color: white;
     font-weight: bold;
 }
+
+.text-center{
+    text-align: center;
+}
+
+a.gmail{
+    background: red;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+a.outlook{
+    background: blue;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
